@@ -28,9 +28,10 @@ void LedStripSimulator::reset()
     std::fill_n(pixelBuffer.begin(), NUM_PIXELS, QColor(0, 0, 0, 0));
 }
 
-void LedStripSimulator::refresh(const std::array<NativeColor, NUM_PIXELS>&& pixels)
+void LedStripSimulator::refresh(const std::vector<NativeColor>& pixels)
 {
-    std::transform(pixels.begin(), pixels.end(), pixelBuffer.begin(),
+    pixelBuffer.clear();
+    std::transform(pixels.begin(), pixels.end(), std::back_inserter(pixelBuffer),
                        [](NativeColor c) -> QColor {
         // Alpha used as white, converted to white outline in paint(...)
         return QColor(NATIVE_GET_RED(c), NATIVE_GET_GREEN(c), NATIVE_GET_BLUE(c), NATIVE_GET_WHITE(c));

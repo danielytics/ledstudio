@@ -18,7 +18,7 @@ public:
     void term();
 
     void reset();
-    void refresh(const std::array<NativeColor, NUM_PIXELS>&& pixels);
+    void refresh(const std::vector<NativeColor>& pixels);
 
     static void registerTypes();
 
@@ -27,7 +27,7 @@ signals:
 public slots:
 
 private:
-    std::array<QColor, NUM_PIXELS> pixelBuffer;
+    std::vector<QColor> pixelBuffer;
 };
 
 #endif // LEDSTRIPSIMULATOR_H

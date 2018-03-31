@@ -202,7 +202,6 @@ void Compositor::update(float time)
     for (auto timeline : timelines) {
         timeline->onTick(time, *this);
         disableBlendMode = false;
-        break;
     }
 
     // Refresh
