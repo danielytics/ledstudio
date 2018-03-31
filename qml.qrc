@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>ListEditor.qml</file>
+    </qresource>
+    <qresource prefix="/QMLFontAwesome">
+        <file alias="font.ttf">QMLFontAwesome/fontawesome-webfont.ttf</file>
+        <file alias="fontawesome.js">QMLFontAwesome/fontawesome.js</file>
+        <file alias="Icon.qml">QMLFontAwesome/Icon.qml</file>
+    </qresource>
+</RCC>
