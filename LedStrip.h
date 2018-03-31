@@ -2,7 +2,7 @@
 #define LEDSTRIP_H
 
 #include <stdint.h>
-#include <array>
+#include <vector>
 
 typedef uint32_t NativeColor; // 0xWWRRGGBB
 
@@ -25,7 +25,7 @@ public:
     /** Turn all LEDs off */
     virtual void reset()=0;
     /** Push colors to strip */
-    virtual void refresh(const std::array<NativeColor, NUM_PIXELS>&& pixels)=0;
+    virtual void refresh(const std::vector<NativeColor>& pixels)=0;
 };
 
 #endif // LEDSTRIP_H

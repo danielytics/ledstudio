@@ -1,64 +1,32 @@
 
+#include <signal.h>
+#include <cstdint>
+#include <time.h>
+#include <unistd.h>
 
-#include "LedStrip.h"
+#include <string>
+#include <fstream>
+
 #include "Compositor.h"
+#include "PhysicalLedStrip.h"
 #include "SparkleEffectRenderer.h"
 #include "FadeEffectRenderer.h"
 #include "LightupEffectRenderer.h"
 
-#include <map>
-#include <string>
-#include <fstream>
+uint8_t running = 1;
 
-#include <stdint.h>
-
-extern "C" {
-	int ledstrip_init();
-	void ledstrip_term();
-	int ledstrip_refresh(uint32_t* data, uint32_t n);
-	int ledstrip_clear();
-	void ledstrip_yield();
-	int ledstrip_should_term();
-};
-
-class PhysicalLedStrip : public LedStrip {
-public:
-	PhysicalLedStrip();
-    ~PhysicalLedStrip();
-
-    void init();
-    void term();
-    void reset();
-    void refresh(const std::array<NativeColor, NUM_PIXELS>&& pixels);
-};
-
-PhysicalLedStrip::PhysicalLedStrip()
+static void ctrl_c_handler(int signum)
 {
+	(void)(signum);
+    running = 0;
 }
 
-PhysicalLedStrip::~PhysicalLedStrip()
+static void setup_handlers(void)
 {
-}
-
-void PhysicalLedStrip::init()
-{
-	ledstrip_init();
-}
-
-void PhysicalLedStrip::term()
-{
-	ledstrip_clear();
-	ledstrip_term();
-}
-
-void PhysicalLedStrip::reset()
-{
-	ledstrip_clear();
-}
-
-void PhysicalLedStrip::refresh(const std::array<NativeColor, NUM_PIXELS>&& pixels)
-{
-	ledstrip_refresh((uint32_t*)(pixels.data()), uint32_t(pixels.size()));
+    struct sigaction sa; 
+    sa.sa_handler = ctrl_c_handler;
+    sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGTERM, &sa, NULL);
 }
 
 enum RunState {
@@ -68,9 +36,18 @@ enum RunState {
 	RUNSTATE_TERMINATE
 };
 
+
 int main(int argc, char *argv[])
 {
-    Compositor compositor(new PhysicalLedStrip());
+	int i;
+	struct timespec start_ts, current_ts;
+	float currentTime = 0.0f;
+	
+	setup_handlers();
+    PhysicalLedStrip strip;
+    strip.init();
+	
+    Compositor compositor(&strip);
 
     std::map<std::string, EffectID> effectsMap {
 		{"sparkle", compositor.registerEffect(new SparkleEffectRenderer)}, 
@@ -87,18 +64,27 @@ int main(int argc, char *argv[])
 
 	RunState prevState = RUNSTATE_WAITING;
 	RunState currentState = RUNSTATE_WAITING;
-	
+
+	printf("Running...\n");
+	usleep(250000); // 1/4 second pause
+	currentState = RUNSTATE_RUNNING;
 	do {
 		if (currentState == RUNSTATE_RUNNING) {
 			if (prevState != RUNSTATE_RUNNING) {
 				compositor.startCompositing();
+				clock_gettime(CLOCK_MONOTONIC, &start_ts);
 			}
-			compositor.update(1.0f);
+			clock_gettime(CLOCK_MONOTONIC, &current_ts);
+			currentTime = ( current_ts.tv_sec - start_ts.tv_sec ) + ( current_ts.tv_nsec - start_ts.tv_nsec ) * 1E-9;
+			compositor.update(currentTime);
 		}
 		prevState = currentState;
-		if (ledstrip_should_term()) {
+		if (!running) {
 			currentState = RUNSTATE_TERMINATE;
 		}
-		ledstrip_yield();
+		usleep(1000000 / 90); // Maximum of 90 refresh's per second
 	} while (currentState != RUNSTATE_TERMINATE);
+
+    strip.term();
+    return 0;
 }

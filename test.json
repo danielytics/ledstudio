@@ -1,0 +1,21 @@
+{"color_tables":{},
+ "led_tables":{},
+ "tracks":{
+   "0":[
+      {"blend_mode":"Normal",
+	"colors":"red",
+	"cycles":1,
+	"easing":"Constantly1",
+	"inverted_easing":false,
+	"leds":"all",
+	"name":"fade",
+	"props":{},
+	"_ticks":0,
+	"_duration":100,
+	"start_time":0,
+	"end_time":10}
+   ],
+   "1":[],
+   "2":[],
+   "3":[]
+}}

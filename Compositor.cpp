@@ -50,7 +50,6 @@ Compositor::Compositor(LedStrip* strip)
     for (unsigned index=0; index<NUM_TIMELINES; index++) {
         timelines[index] = new Timeline;
     }
-    strip->init();
 }
 
 Compositor::~Compositor()
@@ -61,8 +60,6 @@ Compositor::~Compositor()
     for (auto timeline : timelines) {
         delete timeline;
     }
-    strip->term();
-    delete strip;
 }
 
 EffectID Compositor::registerEffect(EffectRenderer* effect)
@@ -199,16 +196,19 @@ void Compositor::update(float time)
     // Clear backbuffer
     std::fill(backbuffer.begin(), backbuffer.end(), Color(0, 0, 0, 0));
     // Render each timeline
+
     activeBlendMode = BLEND_NORMAL; // First timeline cannot blend.
     disableBlendMode = true;
     for (auto timeline : timelines) {
         timeline->onTick(time, *this);
         disableBlendMode = false;
+        break;
     }
+
     // Refresh
-    std::array<NativeColor, LedStrip::NUM_PIXELS> rawPixels;
-    std::transform(backbuffer.begin(), backbuffer.end(), rawPixels.begin(), Color::toRGBW);
-    strip->refresh(std::move(rawPixels));
+    std::vector<NativeColor> rawPixels;
+    std::transform(backbuffer.begin(), backbuffer.end(), std::back_inserter(rawPixels), Color::toRGBW);
+    strip->refresh(rawPixels);
 }
 
 #include <iostream>
