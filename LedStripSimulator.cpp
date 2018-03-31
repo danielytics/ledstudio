@@ -3,8 +3,6 @@
 #include <QQmlApplicationEngine>
 #include <algorithm>
 
-LedStrip::~LedStrip() {}
-
 LedStripSimulator::LedStripSimulator(QQuickItem* parent) : QQuickPaintedItem(parent)
 {
 

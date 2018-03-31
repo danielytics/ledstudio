@@ -962,7 +962,7 @@ ApplicationWindow {
                 anchors.left: saveFileLabel.right
                 anchors.top: parent.top
                 selectByMouse: true
-                text: "ledjacket"
+                text: "default"
             }
             Text {
                 anchors.left: saveFileName.right
@@ -1029,7 +1029,7 @@ ApplicationWindow {
                 anchors.left: openFileLabel.right
                 anchors.top: parent.top
                 selectByMouse: true
-                text: "ledjacket"
+                text: "default"
             }
             Text {
                 anchors.left: openFileName.right
@@ -1187,8 +1187,8 @@ ApplicationWindow {
                 return currentTick+1;
             }
         }
-        console.log("Returning", currentTick);
-        return currentTick;
+        console.log("Returning", 0);
+        return 0;
     }
 
     function timelineUpdated() {
