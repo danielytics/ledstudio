@@ -168,7 +168,9 @@ ApplicationWindow {
             if (!started) {
                 currentTimeTick = 0;
             } else {
-                loadFromJson(timelineAsJson());
+                var json = timelineAsJson();
+                api.writeToFile(false, "autosave.json", json);
+                loadFromJson(json);
             }
         }
 
@@ -326,6 +328,9 @@ ApplicationWindow {
                     onCheckedButtonChanged: {
                         stack.pop()
                         stack.push(checkedButton.component)
+                        if (checkedButton.component === properties) {
+                            timelineUpdated();
+                        }
                     }
                 }
             }
@@ -895,6 +900,28 @@ ApplicationWindow {
                                         }
                                         timelineUpdated();
                                     }
+                                    onDoubleClicked: {
+                                        if (active) {
+                                            // Duplicate current item, to any free space to the right (but does NOT select it)
+                                            // Find the cell to duplicate
+                                            var firstTick = findFirst(ticks, index);
+                                            var cell = timelineModel.get(firstTick).tracks.get(index);
+                                            // Find the cell to duplicate into (first tick of new entry)
+                                            firstTick = findLast(ticks, index);
+                                            if (firstTick !== ticks) {
+                                                // Only create new cell if one was found.
+                                                var newCell = timelineModel.get(firstTick).tracks.get(index);
+                                                newCell.groupid = nextGroupId++;
+                                                newCell.first = true;
+                                                newCell.active = true;
+                                                newCell.duration = fillRight(firstTick, newCell.groupid, index);
+                                                newCell.effect = Object.assign({}, cell.effect);
+                                                newCell.props = Object.assign({}, cell.props);
+                                                timelineUpdated();
+                                            }
+                                        }
+                                    }
+
                                     Rectangle {
                                         anchors.fill: parent
                                         anchors.leftMargin: 2
@@ -1182,6 +1209,19 @@ ApplicationWindow {
             }
         }
         return 0;
+    }
+
+    function findLast(startTick, currentTimeline) {
+        var currentTick = startTick;
+        while (currentTick < timelineModel.count) {
+            var cell = timelineModel.get(currentTick).tracks.get(currentTimeline);
+            if (cell.active) {
+                currentTick++;
+            } else {
+                return currentTick;
+            }
+        }
+        return startTick;
     }
 
     function timelineUpdated() {
