@@ -25,12 +25,15 @@ volatile RunState nextState;
 
 static void ctrl_c_handler(int signum)
 {
-    if (signum == 2 || signum == 15) {
+    if (signum == SIGINT || signum == SIGTERM) {
 	printf("Interrupted, stopping.\n");
 	nextState = RUNSTATE_TERMINATE;
-    } else if (signum == 10) {
+    } else if (signum == SIGUSR1) {
 	printf("Reload requested.\n");
     	nextState = RUNSTATE_RELOAD;
+    } else if (signum == SIGUSR2) {
+	printf("Restart requested.\n");
+	nextState = RUNSTATE_RESTART;
     }
 }
 
@@ -41,6 +44,7 @@ static void setup_handlers(void)
     sigaction(SIGINT, &sa, NULL);
     sigaction(SIGTERM, &sa, NULL);
     sigaction(SIGUSR1, &sa, NULL);
+    sigaction(SIGUSR2, &sa, NULL);
 }
 
 
@@ -89,8 +93,10 @@ int main(int argc, char *argv[])
 			std::istreambuf_iterator<char>());
 			compositor.load(effectsMap, contents);
 			if(prevState == RUNSTATE_WAITING) currentState = prevState;
+		} else if (currentState == RUNSTATE_RESTART) {
+			printf("Restarting.\n");
+			nextState = RUNSTATE_RUNNING;
 		}
-		//printf("prev: %d, next: %d, current: %d\n", prevState, nextState, currentState);
 		prevState = currentState;
 		currentState = nextState;
 		usleep(1000000 / 90); // Maximum of 90 refresh's per second
