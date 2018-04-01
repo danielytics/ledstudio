@@ -99,9 +99,10 @@ int main(int argc, char *argv[])
 		}
 		prevState = currentState;
 		currentState = nextState;
-		usleep(1000000 / 90); // Maximum of 90 refresh's per second
+		usleep(1000000 / 120); // Maximum of 120 refresh's per second
 	} while (currentState != RUNSTATE_TERMINATE);
 
+    printf("Stopping.\n");
     strip.term();
     return 0;
 }
