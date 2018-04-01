@@ -441,7 +441,7 @@ ApplicationWindow {
 
 
                         Text {
-                            text: "LEDs Table:"
+                            text: "Color Table:"
                         }
                         ComboBox {
                             id: colorsCombo
@@ -451,7 +451,7 @@ ApplicationWindow {
                         }
 
                         Text {
-                            text: "Color Table:"
+                            text: "LEDs Table:"
                         }
                         ComboBox {
                             id: ledsCombo
@@ -508,6 +508,8 @@ ApplicationWindow {
                 property var selectedEffectInstance
                 onSelectedItemNotifierChanged: {
                     if (selectedTick != -1 && selectedTimeline != -1) {
+                        // Make sure the combo boxes are populated with the available optoins
+                        populateOptions();
                         // Item selected in timeline
                         var timelineEntry = timelineModel.get(selectedTick);
                         selectedEffectInstance = timelineEntry.tracks.get(selectedTimeline);
@@ -525,11 +527,11 @@ ApplicationWindow {
                         // Populate the fields
                         var effect = selectedEffectInstance.effect;
                         var props = selectedEffectInstance.props;
-                        setCombo(effectsCombo, effect.name);
-                        setCombo(cyclesCombo, effect.cycles);
-                        setCombo(easingCombo, effect.easing);
-                        setCombo(colorsCombo, effect.colors);
-                        setCombo(ledsCombo, effect.leds);
+                        setCombo(effectsCombo, effect.name, "name");
+                        setCombo(cyclesCombo, effect.cycles, "cycles");
+                        setCombo(easingCombo, effect.easing, "easing");
+                        setCombo(colorsCombo, effect.colors, "colors");
+                        setCombo(ledsCombo, effect.leds, "leds");
 
                         easingModeCombo.currentIndex = effect.inverted_easing ? 1 : 0
 
@@ -568,9 +570,13 @@ ApplicationWindow {
                     }
                 }
 
-                function setCombo(combo, value) {
+                function setCombo(combo, value, name) {
                     if (value !== "") {
                         combo.currentIndex = combo.find(value);
+                        if (combo.currentIndex === -1) {
+                            // Error, shouldn't happen.
+                            console.error("Value for", name, "not found in combobox:", value);
+                        }
                     } else {
                         combo.currentIndex = 0;
                     }
@@ -599,44 +605,73 @@ ApplicationWindow {
                     }
                 }
 
-                Component.onCompleted: {
-                    colorsCombo.model = Qt.binding(function(){
-                        var colors = ["white", "off", "superwhite", "red", "green", "blue"];
-                        for (var idx=0; idx<colorsTableModel.count; idx++) {
-                            colors.push(colorsTableModel.get(idx).name);
-                        }
-                        return colors;
-                    });
-                    ledsCombo.model = Qt.binding(function(){
-                        var leds = ["all", "J", "G"];
-                        for (var idx=0; idx<ledTableModel.count; idx++) {
-                            leds.push(ledTableModel.get(idx).name);
-                        }
-                        return leds;
-                    });
-                    // Not sure why the following two are needed, but the combo boxes don't populate without copying to a new array
-                    effectsCombo.model = Qt.binding(function(){
-                        var effects = [];
-                        for (var idx in api.effects) {
-                            effects.push(api.effects[idx]);
-                        }
-                        return effects;
-                    });
-                    easingCombo.model = Qt.binding(function(){
-                        var funcs = [];
-                        for (var idx in api.easingFunctions) {
-                            funcs.push(api.easingFunctions[idx]);
-                        }
-                        return funcs;
-                    });
-                    blendModeCombo.model = Qt.binding(function(){
-                        var modes = [];
-                        for (var idx in api.blendModes) {
-                            modes.push(api.blendModes[idx]);
-                        }
-                        return modes;
-                    });
+                function populateOptions() {
+                    var idx;
+                    var colors = ["white", "off", "superwhite", "red", "green", "blue"];
+                    for (idx=0; idx<colorsTableModel.count; idx++) {
+                        colors.push(colorsTableModel.get(idx).name);
+                    }
+                    colorsCombo.model = colors;
+                    var leds = ["all", "J", "G"];
+                    for (idx=0; idx<ledTableModel.count; idx++) {
+                        leds.push(ledTableModel.get(idx).name);
+                    }
+                    ledsCombo.model = leds;
+                    var effects = [];
+                    for (idx in api.effects) {
+                        effects.push(api.effects[idx]);
+                    }
+                    effectsCombo.model = effects;
+                    var funcs = [];
+                    for (idx in api.easingFunctions) {
+                        funcs.push(api.easingFunctions[idx]);
+                    }
+                    easingCombo.model = funcs;
+                    var modes = [];
+                    for (idx in api.blendModes) {
+                        modes.push(api.blendModes[idx]);
+                    }
+                    blendModeCombo.model = modes;
                 }
+
+//                Component.onCompleted: {
+//                    colorsCombo.model = Qt.binding(function(){
+//                        var colors = ["white", "off", "superwhite", "red", "green", "blue"];
+//                        for (var idx=0; idx<colorsTableModel.count; idx++) {
+//                            colors.push(colorsTableModel.get(idx).name);
+//                        }
+//                        return colors;
+//                    });
+//                    ledsCombo.model = Qt.binding(function(){
+//                        var leds = ["all", "J", "G"];
+//                        for (var idx=0; idx<ledTableModel.count; idx++) {
+//                            leds.push(ledTableModel.get(idx).name);
+//                        }
+//                        return leds;
+//                    });
+//                    // Not sure why the following two are needed, but the combo boxes don't populate without copying to a new array
+//                    effectsCombo.model = Qt.binding(function(){
+//                        var effects = [];
+//                        for (var idx in api.effects) {
+//                            effects.push(api.effects[idx]);
+//                        }
+//                        return effects;
+//                    });
+//                    easingCombo.model = Qt.binding(function(){
+//                        var funcs = [];
+//                        for (var idx in api.easingFunctions) {
+//                            funcs.push(api.easingFunctions[idx]);
+//                        }
+//                        return funcs;
+//                    });
+//                    blendModeCombo.model = Qt.binding(function(){
+//                        var modes = [];
+//                        for (var idx in api.blendModes) {
+//                            modes.push(api.blendModes[idx]);
+//                        }
+//                        return modes;
+//                    });
+//                }
             }
         }
         Component {

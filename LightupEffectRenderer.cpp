@@ -10,7 +10,7 @@ Params LightupEffectRenderer::parameters()
 {
     return {
         {"threshold", 1.0f},
-        {"repeat colours", 0}
+        {"repeat colours", 1}
     };
 }
 
@@ -28,7 +28,7 @@ void LightupEffectRenderer::dispose(EffectHandle handle)
     state.erase(handle);
 }
 
-void LightupEffectRenderer::render(EffectHandle handle, float percentage, float delta, const ColorTable& colorTable, const LedsTable& pixels, RenderEngine* engine)
+void LightupEffectRenderer::render(EffectHandle handle, float percentage, float, const ColorTable& colorTable, const LedsTable& pixels, RenderEngine* engine)
 {
     LightupState& s = state[handle];
     if (percentage >= s.threshold - F_LIMIT) {
