@@ -7,6 +7,7 @@
 #include "SparkleEffectRenderer.h"
 #include "FadeEffectRenderer.h"
 #include "LightupEffectRenderer.h"
+#include "SwipeEffectRenderer.h"
 
 QList<QString> LedStripSimulatorDriver::easingFunctionsList;
 QList<QString> LedStripSimulatorDriver::blendModesList;
@@ -48,6 +49,7 @@ void LedStripSimulatorDriver::init()
     effectsMap["sparkle"] = compositor->registerEffect(new SparkleEffectRenderer);
     effectsMap["fade"] = compositor->registerEffect(new FadeEffectRenderer);
     effectsMap["lightup"] = compositor->registerEffect(new LightupEffectRenderer);
+    effectsMap["swipe"] = compositor->registerEffect(new SwipeEffectRenderer);
     emit effectsChanged(effects());
 
     blendModesList.clear();

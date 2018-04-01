@@ -23,7 +23,8 @@ SOURCES += \
     SparkleEffectRenderer.cpp \
     FadeEffectRenderer.cpp \
     LightupEffectRenderer.cpp \
-    Random.cpp
+    Random.cpp \
+    SwipeEffectRenderer.cpp
 
 RESOURCES += qml.qrc
 
@@ -51,4 +52,5 @@ HEADERS += \
     SparkleEffectRenderer.h \
     FadeEffectRenderer.h \
     LightupEffectRenderer.h \
-    Random.h
+    Random.h \
+    SwipeEffectRenderer.h

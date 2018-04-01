@@ -831,7 +831,7 @@ ApplicationWindow {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: api.seek(ticks * 0.25);
+                            onClicked: api.seek(ticks * 0.1);
                         }
                     }
                     ColumnLayout {
@@ -865,10 +865,8 @@ ApplicationWindow {
                                                 duration = fillRight(ticks, groupid, index);
                                             } else {
                                                 firstTick = findFirst(ticks, index);
-                                                console.log("First after insertion:", firstTick);
                                             }
                                             cell = timelineModel.get(firstTick).tracks.get(index);
-                                            console.log("SELECTED", groupid, cell.groupid);
                                             // Select
                                             selectedGroupId = groupid;
                                             selectedTick = firstTick;
@@ -880,7 +878,6 @@ ApplicationWindow {
                                                 groupid = 0;
                                                 // Update duration on the left
                                                 firstTick = findFirst(ticks-1, index);
-                                                console.log("First, after deletion:", firstTick, ticks);
                                                 cell = timelineModel.get(firstTick).tracks.get(index);
                                                 cell.duration = ticks - firstTick;
                                                 // Remove this cell
@@ -1176,18 +1173,14 @@ ApplicationWindow {
         var currentTick = startTick;
         var expectedGroupId = undefined;
         while (currentTick >= 0) {
-            console.log("Checking", currentTick, expectedGroupId);
             var cell = timelineModel.get(currentTick).tracks.get(currentTimeline);
             if (cell.active && (expectedGroupId == undefined || expectedGroupId === cell.groupid)) {
                 expectedGroupId = cell.groupid;
                 currentTick--;
-                console.log("Moving backwards", currentTick, cell.groupid);
             } else {
-                console.log("Returning", currentTick+1);
                 return currentTick+1;
             }
         }
-        console.log("Returning", 0);
         return 0;
     }
 
