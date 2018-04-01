@@ -11,7 +11,7 @@ ApplicationWindow {
     height: 680
     title: qsTr("LED Studio")
 
-    readonly property int num_tracks: 4
+    readonly property int num_tracks: 6
     readonly property int timeline_cell_width: 50
     property int currentTimeTick: 0
 
@@ -52,12 +52,12 @@ ApplicationWindow {
         // Get all effect instances from timeline
         var effects = {};
         var track;
-        for (track=0; track<4; track++) {
+        for (track=0; track<num_tracks; track++) {
             effects[track] = [];
         }
         for (var tick=0; tick<timelineModel.count; tick++) {
             var timelineEntry = timelineModel.get(tick);
-            for (track=0; track<4; track++) {
+            for (track=0; track<num_tracks; track++) {
                 item = timelineEntry.tracks.get(track);
                 if (item.active && item.first) {
                     var effect = Object.assign({}, item.effect);
@@ -124,7 +124,7 @@ ApplicationWindow {
         generateEmptyTimeline();
         nextGroupId = 1;
 
-        for (var track_idx=0; track_idx<4; track_idx++) {
+        for (var track_idx=0; track_idx<num_tracks; track_idx++) {
             var items = data.tracks[track_idx];
             for (idx in items) {
                 item = items[idx];
@@ -871,7 +871,7 @@ ApplicationWindow {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: api.seek(ticks * 0.1);
+                            onClicked: api.seek(ticks);
                         }
                     }
                     ColumnLayout {

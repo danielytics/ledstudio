@@ -14,7 +14,7 @@ class LedStrip;
 class Compositor : public RenderEngine
 {
 public:
-    enum {NUM_TIMELINES=4};
+    enum {NUM_TIMELINES=6};
     Compositor(LedStrip* strip);
     ~Compositor();
 

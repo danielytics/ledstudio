@@ -142,9 +142,10 @@ QList<QString> LedStripSimulatorDriver::blendModes()
     return blendModesList;
 }
 
-void LedStripSimulatorDriver::seek(float time)
+void LedStripSimulatorDriver::seek(float ticks)
 {
-    startTime = std::chrono::high_resolution_clock::now() - std::chrono::milliseconds(int(time * 1000));
+    float seconds = ticks * 0.1f;
+    startTime = std::chrono::high_resolution_clock::now() - std::chrono::milliseconds(int(seconds * 1000.0f));
     if (!hasStarted) {
         hasStarted = true;
         isPaused = true;
@@ -153,7 +154,7 @@ void LedStripSimulatorDriver::seek(float time)
     if (isPaused) {
         pauseStartTime = std::chrono::high_resolution_clock::now();
     }
-    emit currentTimeChanged(time);
+    emit currentTimeChanged(seconds);
 }
 
 QString LedStripSimulatorDriver::readFromFile(bool homeDir, const QString& fileName)

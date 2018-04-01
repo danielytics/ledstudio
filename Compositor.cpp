@@ -4,6 +4,7 @@
 #include "json.hpp"
 
 #include <cmath>
+#include <iostream>
 
 LedStrip::~LedStrip() {}
 

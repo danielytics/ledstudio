@@ -24,7 +24,8 @@ SOURCES += \
     FadeEffectRenderer.cpp \
     LightupEffectRenderer.cpp \
     Random.cpp \
-    SwipeEffectRenderer.cpp
+    SwipeEffectRenderer.cpp \
+    ColorCycleRenderer.cpp
 
 RESOURCES += qml.qrc
 
@@ -53,4 +54,5 @@ HEADERS += \
     FadeEffectRenderer.h \
     LightupEffectRenderer.h \
     Random.h \
-    SwipeEffectRenderer.h
+    SwipeEffectRenderer.h \
+    ColorCycleRenderer.h

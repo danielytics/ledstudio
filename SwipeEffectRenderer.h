@@ -26,6 +26,7 @@ private:
     EffectHandle nextFreeHandle;
     static std::vector<LedsTable> pixelMapColumns;
     static std::vector<LedsTable> pixelMapRows;
+    friend class ColorCycleRenderer; // For now.. it needs access to the pixel maps
 };
 
 #endif // SWIPEEFFECT_H
