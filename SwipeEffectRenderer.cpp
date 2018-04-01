@@ -1,5 +1,6 @@
 #include "SwipeEffectRenderer.h"
 #include <set>
+#include <algorithm>
 
 
 std::vector<LedsTable> SwipeEffectRenderer::pixelMapColumns {

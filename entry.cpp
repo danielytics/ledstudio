@@ -12,6 +12,7 @@
 #include "SparkleEffectRenderer.h"
 #include "FadeEffectRenderer.h"
 #include "LightupEffectRenderer.h"
+#include "SwipeEffectRenderer.h"
 
 enum RunState {
 	RUNSTATE_WAITING,
@@ -59,7 +60,8 @@ int main(int argc, char *argv[])
     std::map<std::string, EffectID> effectsMap {
 		{"sparkle", compositor.registerEffect(new SparkleEffectRenderer)}, 
 		{"fade", compositor.registerEffect(new FadeEffectRenderer)},
-		{"lightup", compositor.registerEffect(new LightupEffectRenderer)}
+		{"lightup", compositor.registerEffect(new LightupEffectRenderer)},
+		{"swipe", compositor.registerEffect(new SwipeEffectRenderer)}
 	};
 	
 
