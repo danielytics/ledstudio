@@ -107,7 +107,7 @@ void LedStripSimulator::paint(QPainter* painter)
         QPoint pos = positions.at(index);
         painter->drawRect(QRect({pos.x() * pixelSize, pos.y() * pixelSize}, size));
         painter->setPen(QColor(255 - color.red(), 255 - color.green(), 255 - color.blue()));
-        painter->drawText(QPoint(2 + (pos.x() * pixelSize), (pixelSize * 0.7) + (pos.y() * pixelSize)), QString("%1").arg(index));
+        painter->drawText(QPoint(2 + (pos.x() * pixelSize), int(pixelSize * 0.7f) + (pos.y() * pixelSize)), QString("%1").arg(index));
         ++index;
     }
 

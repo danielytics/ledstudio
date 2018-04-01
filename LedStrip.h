@@ -14,7 +14,7 @@ typedef uint32_t NativeColor; // 0xWWRRGGBB
 
 class LedStrip {
 public:
-    enum {NUM_PIXELS = 131};
+    enum {NUM_PIXELS = 132};
     virtual ~LedStrip()=0;
 
     // Setup and stop
