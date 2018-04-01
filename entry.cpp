@@ -12,6 +12,7 @@
 #include "SparkleEffectRenderer.h"
 #include "FadeEffectRenderer.h"
 #include "LightupEffectRenderer.h"
+#include "SwipeEffectRenderer.h"
 
 enum RunState {
 	RUNSTATE_WAITING,
@@ -24,12 +25,15 @@ volatile RunState nextState;
 
 static void ctrl_c_handler(int signum)
 {
-    if (signum == 2 || signum == 15) {
+    if (signum == SIGINT || signum == SIGTERM) {
 	printf("Interrupted, stopping.\n");
 	nextState = RUNSTATE_TERMINATE;
-    } else if (signum == 10) {
+    } else if (signum == SIGUSR1) {
 	printf("Reload requested.\n");
     	nextState = RUNSTATE_RELOAD;
+    } else if (signum == SIGUSR2) {
+	printf("Restart requested.\n");
+	nextState = RUNSTATE_RESTART;
     }
 }
 
@@ -40,6 +44,7 @@ static void setup_handlers(void)
     sigaction(SIGINT, &sa, NULL);
     sigaction(SIGTERM, &sa, NULL);
     sigaction(SIGUSR1, &sa, NULL);
+    sigaction(SIGUSR2, &sa, NULL);
 }
 
 
@@ -59,7 +64,8 @@ int main(int argc, char *argv[])
     std::map<std::string, EffectID> effectsMap {
 		{"sparkle", compositor.registerEffect(new SparkleEffectRenderer)}, 
 		{"fade", compositor.registerEffect(new FadeEffectRenderer)},
-		{"lightup", compositor.registerEffect(new LightupEffectRenderer)}
+		{"lightup", compositor.registerEffect(new LightupEffectRenderer)},
+		{"swipe", compositor.registerEffect(new SwipeEffectRenderer)}
 	};
 	
 
@@ -87,13 +93,16 @@ int main(int argc, char *argv[])
 			std::istreambuf_iterator<char>());
 			compositor.load(effectsMap, contents);
 			if(prevState == RUNSTATE_WAITING) currentState = prevState;
+		} else if (currentState == RUNSTATE_RESTART) {
+			printf("Restarting.\n");
+			nextState = RUNSTATE_RUNNING;
 		}
-		//printf("prev: %d, next: %d, current: %d\n", prevState, nextState, currentState);
 		prevState = currentState;
 		currentState = nextState;
-		usleep(1000000 / 90); // Maximum of 90 refresh's per second
+		usleep(1000000 / 120); // Maximum of 120 refresh's per second
 	} while (currentState != RUNSTATE_TERMINATE);
 
+    printf("Stopping.\n");
     strip.term();
     return 0;
 }

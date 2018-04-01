@@ -41,7 +41,7 @@ void PhysicalLedStrip::init()
     ledstring.channel[0].invert     = 0;
     ledstring.channel[0].count      = LED_COUNT;
     ledstring.channel[0].strip_type = STRIP_TYPE;
-    ledstring.channel[0].brightness = 10;
+    ledstring.channel[0].brightness = 255;
     ledstring.channel[0].wshift     = 0;
     ledstring.channel[0].rshift     = 0;
     ledstring.channel[0].gshift     = 0;
@@ -68,7 +68,8 @@ void PhysicalLedStrip::init()
 
 void PhysicalLedStrip::term()
 {
-	reset();
+    reset();
+    usleep(100000); // Wait 1/10th second before terminating
     ws2811_fini(&ledstring);
 }
 
