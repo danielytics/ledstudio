@@ -17,7 +17,7 @@
 
 #define WIDTH                   8
 #define HEIGHT                  8
-#define LED_COUNT             131
+#define LED_COUNT             132
 
 int width = WIDTH;
 int height = HEIGHT;
