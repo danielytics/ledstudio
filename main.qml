@@ -186,7 +186,7 @@ ApplicationWindow {
                 for (var tenths=0; tenths<10; tenths++) {
                     var tracks = listModelComponent.createObject(timelineModel);
                     for (var t=0; t < num_tracks; t++) {
-                        tracks.append({active:false, first: false, groupid: 0, effect: {name: "", cycles: 1, inverted_easing: false, blend_mode: "", easing: "", colors: "", leds: ""}, props: {}, duration: 0});
+                        tracks.append({active:false, first: false, groupid: 0, effect: {_id: "", name: "", cycles: 1, inverted_easing: false, blend_mode: "", easing: "", colors: "", leds: ""}, props: {}, duration: 0});
                     }
                     timelineModel.append({ticks: ticks, minutes: minutes, seconds: seconds, tenths: tenths, tracks: tracks});
                     ticks++;
@@ -385,6 +385,17 @@ ApplicationWindow {
                         }
 
                         Text {
+                            text: "ID:"
+                        }
+                        TextField {
+                            id: nameField
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            onEditingFinished: commitProperties()
+                            font.pointSize: 8
+                        }
+
+                        Text {
                             text: "Effect:"
                         }
                         ComboBox {
@@ -527,6 +538,7 @@ ApplicationWindow {
                         // Populate the fields
                         var effect = selectedEffectInstance.effect;
                         var props = selectedEffectInstance.props;
+                        nameField.text = effect._id === undefined ? "" : effect._id;
                         setCombo(effectsCombo, effect.name, "name");
                         setCombo(cyclesCombo, effect.cycles, "cycles");
                         setCombo(easingCombo, effect.easing, "easing");
@@ -586,6 +598,7 @@ ApplicationWindow {
                     if (editingActive) {
                         // Commit changes to model
                         var effect = {
+                            _id: nameField.text,
                             name: effectsCombo.currentText,
                             cycles: parseInt(cyclesCombo.currentText),
                             easing: easingCombo.currentText,

@@ -74,6 +74,8 @@ int main(int argc, char *argv[])
 		{"swipe", compositor.registerEffect(new SwipeEffectRenderer)}
 	};
 	
+	std::vector<NativeColor> selftest = {0x00ff0000, 0x0000ff00, 0x000000ff};
+	strip.refresh(selftest);
 
 	RunState prevState = RUNSTATE_WAITING;
 	RunState currentState = RUNSTATE_RELOAD;
